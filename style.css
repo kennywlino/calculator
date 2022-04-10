@@ -1,4 +1,5 @@
 body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     max-width: 960px;
     margin: auto;
     display: flex;
@@ -10,6 +11,7 @@ body {
 #calculator {
     outline: 5px solid black;
     box-shadow: 10px 10px 5px gray;
+    border-radius: 3%;
     padding: 10px;
     width: 500px;
     height: 750px;
@@ -60,8 +62,5 @@ body {
 button {
     width: 75px;
     border-radius: 50%;
-    /* padding: 20px;
-    margin: 10px; 
-    height: 75px;
-    border-radius: 50%; */
+    font-size: 24px;
 }
