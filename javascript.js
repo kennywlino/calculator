@@ -2,11 +2,9 @@ function add(a, b) {
     return a + b;
 }
 
-
 function subtract(a, b) {
     return a - b;
 }
-
 
 function multiply(a, b) {
     return a * b;
@@ -38,11 +36,6 @@ function operate(operator, a, b) {
 function updateDisplay() {
     const display = document.getElementById("display");
     display.textContent = `${firstOperand} ${currOperator} ${secondOperand}`;
-}
-
-function updateDisplayResult(result) {
-    const display = document.getElementById("display");
-    display.textContent = result;
 }
 
 function setDigitsEventListener() {
@@ -84,8 +77,16 @@ function setOperatorEventListener() {
     const operators = document.querySelectorAll('.operator');
     operators.forEach((operator) => {
         operator.addEventListener('click', () => {
+            if (currOperator == '') {
             currOperator = wordToOperatorSymbol(operator.id);
             updateDisplay();
+            } else {
+                result = operate(currOperator, firstOperand, secondOperand);
+                resetAllVar();
+                firstOperand = result;
+                currOperator = wordToOperatorSymbol(operator.id);
+                updateDisplay();
+            }
         });
     });
 }
@@ -94,7 +95,48 @@ function setEqualsEventListener() {
     const equalsButton = document.getElementById('equals');
     equalsButton.addEventListener('click', () => {
         result = operate(currOperator, firstOperand, secondOperand);
-        updateDisplayResult(result); 
+        resetAllVar();
+        firstOperand = result;
+        updateDisplay();
+    });
+}
+
+function setAlLClearEventListener() {
+    const allClearButton = document.getElementById('all-clear');
+    allClearButton.addEventListener('click', () => {
+        resetAllVar();
+        updateDisplay();
+    });
+}
+
+function resetAllVar() {
+    firstOperand = '';
+    secondOperand = '';
+    currOperator = '';
+}
+
+function getCurrentVar() {
+    if (firstOperand != '' && currOperator == '') {
+        return "firstOperand";
+    } else if (currOperator != '' && secondOperand == '') {
+        return "currOperator";
+    } else {
+        return "secondOperand";
+    }
+}
+
+function setClearEventListener() {
+    const clearButton = document.getElementById('clear');
+    clearButton.addEventListener('click', () => {
+        currentVar = getCurrentVar();
+        if (currentVar == "firstOperand") {
+            firstOperand = '';
+        } else if (currentVar == "currOperator") {
+            currOperator = '';
+        } else {
+            secondOperand = '';
+        }
+        updateDisplay();
     });
 }
 
@@ -105,6 +147,8 @@ currOperator = '';
 setDigitsEventListener();
 setOperatorEventListener();
 setEqualsEventListener();
+setAlLClearEventListener();
+setClearEventListener();
 
 // PSEUDOCODE:
 // How do we get variables a & b? => on number click; store them as global variables
