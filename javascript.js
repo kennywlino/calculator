@@ -36,39 +36,6 @@ function operate(operator, a, b) {
     }
 }
 
-function updateDisplay() {
-    const display = document.getElementById("display");
-    display.textContent = `${firstOperand} ${currOperator} ${secondOperand}`;
-}
-
-function setDigitsEventListener() {
-    const buttons = document.querySelectorAll('.number');
-    buttons.forEach((button) => {
-        button.addEventListener('click', () => {
-            appendDigit(button.id);
-            updateDisplay();
-        });
-    });
-}
-
-function appendDigit(digit) {
-    if (currOperator == '') {
-        if (digit == '.' && containsDecimal(firstOperand)) {
-            digit = '';
-        }
-        firstOperand += digit;
-    } else {
-        if(digit == '.' && containsDecimal(secondOperand)) {
-            digit = '';
-        }
-        secondOperand += digit;
-    }
-}
-
-function containsDecimal(num) {
-    return num.includes('.');
-}
-
 function wordToOperatorSymbol(operatorWord) {
     switch (operatorWord) {
     case "add":
@@ -86,40 +53,27 @@ function wordToOperatorSymbol(operatorWord) {
     }
 }
 
-function setOperatorEventListener() {
-    const operators = document.querySelectorAll('.operator');
-    operators.forEach((operator) => {
-        operator.addEventListener('click', () => {
-            if (currOperator == '') {
-            currOperator = wordToOperatorSymbol(operator.id);
-            updateDisplay();
-            } else {
-                result = operate(currOperator, firstOperand, secondOperand);
-                resetAllVar();
-                firstOperand = result;
-                currOperator = wordToOperatorSymbol(operator.id);
-                updateDisplay();
-            }
-        });
-    });
+function updateDisplay() {
+    const display = document.getElementById("display");
+    display.textContent = `${firstOperand} ${currOperator} ${secondOperand}`;
 }
 
-function setEqualsEventListener() {
-    const equalsButton = document.getElementById('equals');
-    equalsButton.addEventListener('click', () => {
-        result = operate(currOperator, firstOperand, secondOperand);
-        resetAllVar();
-        firstOperand = result;
-        updateDisplay();
-    });
+function containsDecimal(num) {
+    return num.includes('.');
 }
 
-function setAlLClearEventListener() {
-    const allClearButton = document.getElementById('all-clear');
-    allClearButton.addEventListener('click', () => {
-        resetAllVar();
-        updateDisplay();
-    });
+function appendDigit(digit) {
+    if (currOperator == '') {
+        if (digit == '.' && containsDecimal(firstOperand)) {
+            digit = '';
+        }
+        firstOperand += digit;
+    } else {
+        if(digit == '.' && containsDecimal(secondOperand)) {
+            digit = '';
+        }
+        secondOperand += digit;
+    }
 }
 
 function resetAllVar() {
@@ -138,6 +92,56 @@ function getCurrentVar() {
     }
 }
 
+function calculate() {
+    result = operate(currOperator, firstOperand, secondOperand);
+    resetAllVar();
+    firstOperand = result;
+}
+
+function setDigitsEventListener() {
+    const buttons = document.querySelectorAll('.number');
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            appendDigit(button.id);
+            updateDisplay();
+        });
+    });
+}
+
+function setOperatorEventListener() {
+    const operators = document.querySelectorAll('.operator');
+    operators.forEach((operator) => {
+        operator.addEventListener('click', () => {
+            if (currOperator == '') {
+            currOperator = wordToOperatorSymbol(operator.id);
+            updateDisplay();
+            } else {
+                calculate();
+                currOperator = wordToOperatorSymbol(operator.id);
+                updateDisplay();
+            }
+        });
+    });
+}
+
+function setEqualsEventListener() {
+    const equalsButton = document.getElementById('equals');
+    equalsButton.addEventListener('click', () => {
+        if (currOperator != '' && firstOperand != '' && secondOperand != '') {
+            calculate();
+            updateDisplay();
+        }
+    });
+}
+
+function setAlLClearEventListener() {
+    const allClearButton = document.getElementById('all-clear');
+    allClearButton.addEventListener('click', () => {
+        resetAllVar();
+        updateDisplay();
+    });
+}
+
 function setClearEventListener() {
     const clearButton = document.getElementById('clear');
     clearButton.addEventListener('click', () => {
@@ -151,6 +155,11 @@ function setClearEventListener() {
         }
         updateDisplay();
     });
+}
+
+function setKeyboardEventListener() {
+    const calcNums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'];
+    const calcOpers = ['+', '-', '*', '/', 'c', 'C'];
 }
 
 firstOperand = '';
