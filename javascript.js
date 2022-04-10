@@ -27,10 +27,10 @@ function operate(operator, a, b) {
     case "-":
         return subtract(a, b);
         break;
-    case "x":
+    case "*":
         return multiply(a, b);
         break;
-    case "÷":
+    case "/":
         return divide(a, b);
         break;
     }
@@ -45,10 +45,10 @@ function wordToOperatorSymbol(operatorWord) {
         return "-";
         break;
     case "multiply":
-        return "x";
+        return "*";
         break;
     case "divide":
-        return "÷";
+        return "/";
         break;
     }
 }
@@ -74,12 +74,14 @@ function appendDigit(digit) {
         }
         secondOperand += digit;
     }
+    updateDisplay();
 }
 
 function resetAllVar() {
     firstOperand = '';
     secondOperand = '';
     currOperator = '';
+    updateDisplay();
 }
 
 function getCurrentVar() {
@@ -96,6 +98,29 @@ function calculate() {
     result = operate(currOperator, firstOperand, secondOperand);
     resetAllVar();
     firstOperand = result;
+    updateDisplay();
+}
+
+function processOperator(oper) {
+    if (currOperator == '') {
+        currOperator = oper;
+    } else {
+        calculate();
+        currOperator = oper;
+    }
+    updateDisplay();
+}
+
+function clearCurrentVar() {
+    currentVar = getCurrentVar();
+    if (currentVar == "firstOperand") {
+        firstOperand = '';
+    } else if (currentVar == "currOperator") {
+        currOperator = '';
+    } else {
+        secondOperand = '';
+    }
+    updateDisplay();
 }
 
 function setDigitsEventListener() {
@@ -103,7 +128,6 @@ function setDigitsEventListener() {
     buttons.forEach((button) => {
         button.addEventListener('click', () => {
             appendDigit(button.id);
-            updateDisplay();
         });
     });
 }
@@ -112,14 +136,8 @@ function setOperatorEventListener() {
     const operators = document.querySelectorAll('.operator');
     operators.forEach((operator) => {
         operator.addEventListener('click', () => {
-            if (currOperator == '') {
-            currOperator = wordToOperatorSymbol(operator.id);
-            updateDisplay();
-            } else {
-                calculate();
-                currOperator = wordToOperatorSymbol(operator.id);
-                updateDisplay();
-            }
+            operSymbol = wordToOperatorSymbol(operator.id);
+            processOperator(operSymbol);
         });
     });
 }
@@ -129,7 +147,6 @@ function setEqualsEventListener() {
     equalsButton.addEventListener('click', () => {
         if (currOperator != '' && firstOperand != '' && secondOperand != '') {
             calculate();
-            updateDisplay();
         }
     });
 }
@@ -138,28 +155,35 @@ function setAlLClearEventListener() {
     const allClearButton = document.getElementById('all-clear');
     allClearButton.addEventListener('click', () => {
         resetAllVar();
-        updateDisplay();
     });
 }
 
 function setClearEventListener() {
     const clearButton = document.getElementById('clear');
     clearButton.addEventListener('click', () => {
-        currentVar = getCurrentVar();
-        if (currentVar == "firstOperand") {
-            firstOperand = '';
-        } else if (currentVar == "currOperator") {
-            currOperator = '';
-        } else {
-            secondOperand = '';
-        }
-        updateDisplay();
+        clearCurrentVar();
     });
 }
 
 function setKeyboardEventListener() {
     const calcNums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'];
-    const calcOpers = ['+', '-', '*', '/', 'c', 'C'];
+    const calcOpers = ['+', '-', '*', '/'];
+    document.addEventListener('keydown', (event) => {
+        var name = event.key;
+        if (calcNums.includes(name)) {
+            appendDigit(name);
+        } else if (calcOpers.includes(name)) {
+            processOperator(name);
+        } else if (name == 'Enter') {
+            if (currOperator != '' && firstOperand != '' && secondOperand != '') {
+                calculate();
+            }
+        } else if (name == 'C') {
+            resetAllVar();
+        } else if (name == 'c') {
+            clearCurrentVar();
+        }
+    }, false);
 }
 
 firstOperand = '';
@@ -171,9 +195,4 @@ setOperatorEventListener();
 setEqualsEventListener();
 setAlLClearEventListener();
 setClearEventListener();
-
-// PSEUDOCODE:
-// How do we get variables a & b? => on number click; store them as global variables
-// How do we store the operator? => on operator click; store as global variable
-// How do we return the results? => global variable? how do we make it the firstOperand to use more operators?
-// How do we update the display? => on button click; same time as operations above
+setKeyboardEventListener();
