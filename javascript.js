@@ -11,6 +11,9 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
+    if (b == 0) {
+        return "ERROR";
+    }
     return a / b;
 }
 
@@ -50,10 +53,20 @@ function setDigitsEventListener() {
 
 function appendDigit(digit) {
     if (currOperator == '') {
+        if (digit == '.' && containsDecimal(firstOperand)) {
+            digit = '';
+        }
         firstOperand += digit;
     } else {
+        if(digit == '.' && containsDecimal(secondOperand)) {
+            digit = '';
+        }
         secondOperand += digit;
     }
+}
+
+function containsDecimal(num) {
+    return num.includes('.');
 }
 
 function wordToOperatorSymbol(operatorWord) {
